@@ -1,12 +1,11 @@
-package com.example.synergy
+package com.example.synergy.data
 
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import kotlin.jvm.java
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 object RetrofitClient {
     const val BASE_URL = "http://3.39.158.137:8080/"
