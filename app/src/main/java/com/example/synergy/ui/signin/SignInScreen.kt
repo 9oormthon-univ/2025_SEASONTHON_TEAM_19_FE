@@ -49,7 +49,7 @@ fun SignInScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(R.drawable.logo),
+            painter = painterResource(R.drawable.logo_with_text),
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
