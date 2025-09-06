@@ -1,5 +1,7 @@
 package com.example.synergy.data
 
+import com.example.synergy.data.apiservice.AuthApi
+import com.example.synergy.data.apiservice.MentorApi
 import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.synergy.R
 import com.example.synergy.ui.home.component.FavoriteMentorItem
-import com.example.synergy.ui.home.model.Mentor
+import com.example.synergy.data.model.Mentor
 import com.example.synergy.ui.theme.SYNERGYTheme
 
 @Composable

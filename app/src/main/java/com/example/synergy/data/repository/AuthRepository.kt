@@ -1,5 +1,6 @@
-package com.example.synergy.data
+package com.example.synergy.data.repository
 
+import com.example.synergy.data.apiservice.AuthApi
 import com.example.synergy.ui.signin.SignInRequest
 import com.example.synergy.ui.signin.SignInResponse
 import com.example.synergy.ui.signup.SignUpRequest

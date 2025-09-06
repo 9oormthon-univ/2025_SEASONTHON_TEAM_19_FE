@@ -1,6 +1,18 @@
-package com.example.synergy.ui.home.model
+package com.example.synergy.data.model
 
 import com.google.gson.annotations.SerializedName
+
+data class MentorPageResponse(
+    val content: List<Mentor>,
+    val last: Boolean,
+    val number: Int,
+    val size: Int,
+    val totalElements: Int,
+    val totalPages: Int,
+    val first: Boolean,
+    val numberOfElements: Int,
+    val empty: Boolean
+)
 
 data class Mentor(
     @SerializedName("id") val id: Int,

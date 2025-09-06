@@ -1,14 +1,16 @@
-package com.example.synergy.data
+package com.example.synergy.data.repository
 
-import com.example.synergy.ui.mentorlist.MentorCategoryDto
-import com.example.synergy.ui.mentorlist.MentorPageResponse
+import com.example.synergy.data.RetrofitClient
+import com.example.synergy.data.apiservice.MentorApi
+import com.example.synergy.data.model.Category
+import com.example.synergy.data.model.MentorPageResponse
 
 class MentorRepository(
     private val api: MentorApi = RetrofitClient.mentorApi
 ) {
 
     // 카테고리 리스트 보기
-    suspend fun getCategories(): List<MentorCategoryDto> = api.getCategories()
+    suspend fun getCategories(): List<Category> = api.getCategories()
 
     // 전체 멘토 리스트 보기
     suspend fun getMentors(page: Int, size: Int): MentorPageResponse =

@@ -2,7 +2,7 @@ package com.example.synergy.ui.home
 
 import androidx.lifecycle.ViewModel
 import com.example.synergy.BuildConfig
-import com.example.synergy.ui.home.model.Mentor
+import com.example.synergy.data.model.Mentor
 import com.example.synergy.util.DummyData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

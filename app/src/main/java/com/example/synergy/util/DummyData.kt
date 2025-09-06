@@ -1,7 +1,7 @@
 package com.example.synergy.util
 
-import com.example.synergy.ui.home.model.Category
-import com.example.synergy.ui.home.model.Mentor
+import com.example.synergy.data.model.Category
+import com.example.synergy.data.model.Mentor
 
 object DummyData {
     val dummyMentors = listOf(

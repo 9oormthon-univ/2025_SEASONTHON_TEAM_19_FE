@@ -33,13 +33,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.FlowRow
+import com.example.synergy.data.model.Mentor
 
 @Composable
 fun MentorListScreen(
-    viewModel: MentorListViewModel = viewModel()
+    viewModel: MentorListViewModel = viewModel(),
 ) {
     val ui by viewModel.ui.collectAsState()
-    val tabs = remember(ui.categories) { listOf("전체") + ui.categories.map { it.name } }
+    val tabs = remember(ui.categories) { listOf("전체") + ui.categories.map { it.category } }
     val listState = rememberLazyListState()
 
     LaunchedEffect(ui.mentors.size, ui.isLoading, ui.isEnd) {
@@ -99,19 +100,34 @@ fun MentorListScreen(
                 }
 
                 if (ui.isLoading) item {
-                    Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
                         CircularProgressIndicator()
                     }
                 }
 
                 if (ui.isEnd && ui.mentors.isNotEmpty()) item {
-                    Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text("마지막 페이지입니다", color = Color(0xFF9E9E9E))
                     }
                 }
 
                 if (ui.error != null && ui.mentors.isEmpty()) item {
-                    Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text(ui.error!!, color = Color(0xFFB00020))
                     }
                 }
@@ -142,8 +158,9 @@ fun MentorListScreen(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun MentorItem(user: MentorUserDto) {
+private fun MentorItem(user: Mentor) {
     var isBookmarked by remember { mutableStateOf(false) }
 
     Row(
@@ -164,7 +181,7 @@ private fun MentorItem(user: MentorUserDto) {
 
         Column(Modifier.weight(1f)) {
             // 카테고리 뱃지
-            val categoryNames = remember(user.categories) { user.categories.map { it.name } }
+            val categoryNames = remember(user.categories) { user.categories.map { it.category } }
 
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -179,7 +196,7 @@ private fun MentorItem(user: MentorUserDto) {
 
             // 멘토이름
             Text(
-                text = user.username,
+                text = user.name,
                 style = MaterialTheme.typography.titleMedium,
                 color = Color(0xFF323232),
                 maxLines = 1,
