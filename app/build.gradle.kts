@@ -8,11 +8,11 @@ plugins {
 
 android {
     namespace = "com.example.synergy"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.synergy"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -38,6 +38,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -60,16 +61,18 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     // Navigation
-    implementation(libs.androidx.navigation.compose.android)
+    implementation(libs.androidx.navigation.compose)
 
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
+    // Retrofit
     implementation(libs.retrofit)
+    implementation(libs.gson)
+
     implementation(libs.converter.moshi)
     implementation(libs.logging.interceptor)
 
-    implementation(libs.androidx.lifecycle.viewmodel.ktx.v284)
     implementation(libs.kotlinx.coroutines.android)
 
     implementation(libs.moshi.kotlin)
