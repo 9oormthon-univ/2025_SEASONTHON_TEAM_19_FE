@@ -42,6 +42,14 @@ fun SYNERGYTopBar(
             ),
             onBackClick = { navController.popBackStack() }
         )
+        NavigationRoute.Mentoring.route -> SYNERGYDefaultTopBar(
+            title = stringResource(R.string.mentoring),
+            actionIcons = listOf(
+                TopBarAction(R.drawable.baseline_search_24, "search_button") {
+
+                }
+            )
+        )
     }
 }
 
