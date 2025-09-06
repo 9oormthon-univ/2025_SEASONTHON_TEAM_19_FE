@@ -21,7 +21,7 @@ private val LightColorScheme = lightColorScheme(
     surface = White,
     onSurface = Gray80,
     surfaceTint = White,
-    onError = White
+    onError = Gray40
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
