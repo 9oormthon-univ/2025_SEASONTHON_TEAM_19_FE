@@ -34,6 +34,15 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.FlowRow
 import com.example.synergy.data.model.Mentor
+import com.example.synergy.ui.theme.Green1
+import com.example.synergy.ui.theme.Green2
+import com.example.synergy.ui.theme.Green3
+import com.example.synergy.ui.theme.Green4
+import com.example.synergy.ui.theme.Green5
+import com.example.synergy.ui.theme.Green6
+import com.example.synergy.ui.theme.Green7
+import com.example.synergy.ui.theme.Green8
+import com.example.synergy.ui.theme.MainGreen
 
 @Composable
 fun MentorListScreen(
@@ -181,14 +190,14 @@ private fun MentorItem(user: Mentor) {
 
         Column(Modifier.weight(1f)) {
             // 카테고리 뱃지
-            val categoryNames = remember(user.categories) { user.categories.map { it.category } }
+            val categories = remember(user.categories) { user.categories }
 
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                categoryNames.forEach { name ->
-                    CategoryChip(text = name)
+                categories.forEach { cat ->
+                    CategoryChip(code = cat.code, name = cat.category)
                 }
             }
 
@@ -229,16 +238,30 @@ private fun MentorItem(user: Mentor) {
     }
 }
 
+private fun categoryColor(code: String): Color {
+    return when (code) {
+        "AI" -> Green1
+        "DIGITAL_UTIL" -> Green2
+        "HOBBY" -> Green3
+        "JOB_WORK" -> Green4
+        "CARE" -> Green5
+        "EXERCISE" -> Green6
+        "LIFE" -> Green7
+        "MIND" -> Green8
+        else -> MainGreen
+    }
+}
+
 @Composable
-private fun CategoryChip(text: String) {
+private fun CategoryChip(code: String, name: String) {
     Surface(
-        color = Color(0xFFEEEEEE),
+        color = categoryColor(code),
         shape = RoundedCornerShape(6.dp)
     ) {
         Text(
-            text = text,
+            text = name,
             style = MaterialTheme.typography.labelSmall,
-            color = Color(0xFF666666),
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
             maxLines = 1,
             overflow = TextOverflow.Clip
