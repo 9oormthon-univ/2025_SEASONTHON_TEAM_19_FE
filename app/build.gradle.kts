@@ -69,11 +69,10 @@ dependencies {
     // Retrofit
     implementation(libs.retrofit)
     implementation(libs.gson)
+    implementation(libs.converter.gson)
 
-    implementation(libs.converter.moshi)
     implementation(libs.logging.interceptor)
 
     implementation(libs.kotlinx.coroutines.android)
 
-    implementation(libs.moshi.kotlin)
 }
