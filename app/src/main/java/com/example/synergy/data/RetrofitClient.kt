@@ -1,6 +1,7 @@
 package com.example.synergy.data
 
 import com.example.synergy.data.apiservice.AuthApi
+import com.example.synergy.data.apiservice.LectureApi
 import com.example.synergy.data.apiservice.MentorApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -32,4 +33,5 @@ object RetrofitClient {
 
     val authApi: AuthApi by lazy { retrofit.create(AuthApi::class.java) }
     val mentorApi: MentorApi by lazy { retrofit.create(MentorApi::class.java) }
+    val lectureApi: LectureApi by lazy { retrofit.create(LectureApi::class.java) }
 }

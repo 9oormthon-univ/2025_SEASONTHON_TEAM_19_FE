@@ -1,15 +1,36 @@
 package com.example.synergy.ui.lecturelist
 
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
-import androidx.compose.runtime.Composable
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,38 +40,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.synergy.R
-
-data class Lecture(
-    val id: Int,
-    val title: String,
-    val description: String,
-    val category: String,
-    val bookmarked: Boolean = false
-)
-
-data class PageResponse<T>(
-    val content: List<T>,
-    val pageNumber: Int,
-    val pageSize: Int,
-    val totalElements: Int,
-    val totalPages: Int,
-    val last: Boolean
-)
+import com.example.synergy.data.model.Lecture
+import com.example.synergy.ui.theme.SYNERGYTheme
 
 @Composable
 fun LectureListScreen(
-    page: PageResponse<Lecture>,
-    tabs: List<String> = listOf("전체", "카테", "고리", "카테", "고리"),
     onCardClick: (Lecture) -> Unit = {},
-    onBookmarkToggle: (Lecture, Boolean) -> Unit = { _, _ -> }
+    onBookmarkToggle: (Lecture, Boolean) -> Unit = { _, _ -> },
+    viewModel: LectureListViewModel = viewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    val categories: List<Pair<String, String>> = listOf(
+        "전체" to "전체",
+        "AI" to "AI",
+        "DIGITAL_UTIL" to "디지털활용",
+        "HOBBY" to "취미",
+        "JOB_WORK" to "취업 & 일",
+        "CARE" to "돌봄",
+        "EXERCISE" to "운동",
+        "LIFE" to "생활",
+        "MIND" to "마음"
+    )
+
     var selectedTab by remember { mutableIntStateOf(0) }
-    // 카드 개별 상태
-    // 서버 연동 시 ViewModel 상태로 교체
-    var bookmarked by remember(page.content) {
-        mutableStateOf(page.content.associate { it.id to it.bookmarked })
-    }
 
     Column(Modifier.fillMaxSize()) {
         ScrollableTabRow(
@@ -59,20 +73,20 @@ fun LectureListScreen(
             containerColor = Color.Transparent,
             contentColor = MaterialTheme.colorScheme.onSurface,
             indicator = { positions ->
-                TabRowDefaults.Indicator(
+                SecondaryIndicator(
                     modifier = Modifier.tabIndicatorOffset(positions[selectedTab]),
                     color = Color.Black
                 )
             },
             divider = { HorizontalDivider(color = Color(0x14000000)) }
         ) {
-            tabs.forEachIndexed { i, t ->
+            categories.forEachIndexed { i, t ->
                 Tab(
                     selected = selectedTab == i,
                     onClick = { selectedTab = i },
                     text = {
                         Text(
-                            if (i == 0) "전체" else t,
+                            t.second,
                             fontWeight = if (selectedTab == i) FontWeight.SemiBold else FontWeight.Normal
                         )
                     },
@@ -82,9 +96,13 @@ fun LectureListScreen(
             }
         }
 
-        val filtered = page.content.filter {
-            selectedTab == 0 || it.category == tabs[selectedTab]
-        }
+
+        val filtered =
+//            if (selectedTab == 0) {
+//            uiState.content
+//        } else {
+            uiState.content.filter { selectedTab == 0 || it.category == categories[selectedTab].first }
+//        }
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -98,12 +116,10 @@ fun LectureListScreen(
                 key = { it.id }
             ) { lecture ->
                 LectureCard(
-                    lecture = lecture.copy(bookmarked = bookmarked[lecture.id] == true),
+                    lecture = lecture,
                     onClick = { onCardClick(lecture) },
                     onBookmarkClick = {
-                        val newValue = !(bookmarked[lecture.id] ?: false)
-                        bookmarked = bookmarked.toMutableMap().also { m -> m[lecture.id] = newValue }
-                        onBookmarkToggle(lecture, newValue)
+
                     }
                 )
             }
@@ -115,7 +131,7 @@ fun LectureListScreen(
 private fun LectureCard(
     lecture: Lecture,
     onClick: () -> Unit,
-    onBookmarkClick: () -> Unit
+    onBookmarkClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -148,15 +164,12 @@ private fun LectureCard(
             // 북마크
             IconButton(
                 onClick = onBookmarkClick,
-                modifier = Modifier.align(Alignment.BottomEnd).padding(8.dp)
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp)
             ) {
                 Icon(
-                    painter = painterResource(
-                        id = if (lecture.bookmarked)
-                            R.drawable.ic_bookmark_selected
-                        else
-                            R.drawable.ic_bookmark
-                    ),
+                    painter = painterResource(R.drawable.ic_bookmark),
                     contentDescription = "bookmark",
                     tint = Color.Unspecified   // TODO: 색상 지정
                 )
@@ -185,7 +198,7 @@ private fun LectureCard(
         Spacer(Modifier.height(2.dp))
         // 내용
         Text(
-            text = lecture.description,
+            text = lecture.content ?: "",
             style = MaterialTheme.typography.bodySmall,
             color = Color(0xFF323232),
             maxLines = 1,
@@ -197,15 +210,5 @@ private fun LectureCard(
 @Preview(showBackground = true, showSystemUi = false)
 @Composable
 private fun PreviewLectureListScreen() {
-    val page = PageResponse(
-        content = listOf(
-            Lecture(1, "강연제목", "내용...", "카테고리"),
-            Lecture(2, "강연제목", "내용...", "카테고리"),
-            Lecture(3, "강연제목", "내용...", "카테고리"),
-            Lecture(4, "강연제목", "내용...", "카테고리"),
-            Lecture(5, "강연제목", "내용...", "다른카테"),
-        ),
-        pageNumber = 0, pageSize = 10, totalElements = 5, totalPages = 1, last = true
-    )
-    MaterialTheme { LectureListScreen(page = page) }
+    SYNERGYTheme { LectureListScreen() }
 }
