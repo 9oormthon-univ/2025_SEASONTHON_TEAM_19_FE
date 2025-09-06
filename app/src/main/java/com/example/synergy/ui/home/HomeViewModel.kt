@@ -43,7 +43,7 @@ class HomeViewModel(
 
     private fun loadMyMentoringList() {
         if (BuildConfig.DEBUG)
-            _uiState.value = _uiState.value.copy(myMentoringList = listOf("a", "b", "c"))
+            _uiState.value = _uiState.value.copy(myMentoringList = listOf(Pair("Leo    D-3", "2025.09.10 19:00 예약"), Pair("Nora    D-5", "2025.09.12 17:00 예약"), Pair("Owen    D-7", "2025.09.14 19:00 예약")))
         else {
 
         }
@@ -51,7 +51,7 @@ class HomeViewModel(
 
     private fun loadMyLectures() {
         if (BuildConfig.DEBUG)
-            _uiState.value = _uiState.value.copy(myLectures = listOf("d", "e", "f"))
+            _uiState.value = _uiState.value.copy(myLectures = listOf(Pair("AI 입문    D-13", "2025.09.20 14:00 예약"), Pair("AI 실전    D-20", "2025.09.27 14:00 예약")))
         else {
 
         }
@@ -59,7 +59,7 @@ class HomeViewModel(
 
     fun loadRecentMentors() {
         if (BuildConfig.DEBUG)
-            _uiState.value = _uiState.value.copy(recentMentors = listOf("g", "h", "i"))
+            _uiState.value = _uiState.value.copy(recentMentors = listOf("Park", "Nora", "James"))
         else {
 
         }
