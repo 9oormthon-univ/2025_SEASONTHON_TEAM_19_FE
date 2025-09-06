@@ -11,19 +11,31 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 object RetrofitClient {
     const val BASE_URL = "http://3.39.158.137:8080/"
 
-    val authApi: AuthApi by lazy {
-        val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-        val client = OkHttpClient.Builder().addInterceptor(logging).build()
-        val moshi = Moshi.Builder()
+    private val logging by lazy {
+        HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+    }
+    private val client by lazy {
+        OkHttpClient.Builder().addInterceptor(logging).build()
+    }
+    private val moshi by lazy {
+        Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
             .build()
-
+    }
+    private val retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(client)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
-            .create(AuthApi::class.java)
+    }
+
+    val authApi: AuthApi by lazy {
+        retrofit.create(AuthApi::class.java)
+    }
+
+    val mentorApi: MentorApi by lazy {
+        retrofit.create(MentorApi::class.java)
     }
 
 }

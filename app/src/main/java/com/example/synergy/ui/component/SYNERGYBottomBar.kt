@@ -26,6 +26,7 @@ fun SYNERGYNavigationBar(
     val bottomItems = listOf(
         Pair(NavigationRoute.Home.route, stringResource(R.string.home)),
         Pair(NavigationRoute.Lecture.route, stringResource(R.string.lecture)),
+        Pair(NavigationRoute.Mentoring.route, stringResource(R.string.mentoring)),
         Pair(NavigationRoute.User.route, stringResource(R.string.user))
     )
     var selectedItem by remember { mutableStateOf(bottomItems.first().first) }

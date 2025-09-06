@@ -1,7 +1,6 @@
 package com.example.synergy.ui.mentorlist
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import com.example.synergy.R.drawable.ic_bookmark
 import com.example.synergy.R.drawable.ic_bookmark_selected
 import androidx.compose.foundation.lazy.items
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 data class PageResponse<T>(
     val content: List<T>,
@@ -42,34 +42,26 @@ data class PageResponse<T>(
     val last: Boolean
 )
 
-data class MentorUser(
-    val id: Int,
-    val username: String,
-    val email: String,
-    val mentor: Boolean
-)
-
 @Composable
 fun MentorListScreen(
-    page: PageResponse<MentorUser>,
-    // TODO: 서버에서 받은 실제 카테고리로 교체
-    tabs: List<String> = listOf("전체", "카테", "고리", "카테", "고리"),
-    onRequestMentoring: () -> Unit = {}
+    viewModel: MentorListViewModel = viewModel()
 ) {
-    var selectedTab by remember { mutableIntStateOf(0) }
+    val ui by viewModel.ui.collectAsState()
+
+    val tabs = remember(ui.categories) { listOf("전체") + ui.categories.map { it.name } }
 
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize()) {
 
             // TabRow
             ScrollableTabRow(
-                selectedTabIndex = selectedTab,
+                selectedTabIndex = ui.selectedTabIndex,
                 edgePadding = 16.dp,
                 containerColor = Color.Transparent,
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 indicator = { tabPositions ->
                     TabRowDefaults.SecondaryIndicator(
-                        modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
+                        modifier = Modifier.tabIndicatorOffset(tabPositions[ui.selectedTabIndex]),
                         color = Color.Black
                     )
                 },
@@ -77,12 +69,12 @@ fun MentorListScreen(
             ) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
-                        selected = selectedTab == index,
-                        onClick = { selectedTab = index },
+                        selected = ui.selectedTabIndex == index,
+                        onClick = { viewModel.onTabSelected(index) },
                         text = {
                             Text(
-                                if (index == 0) "전체" else title,
-                                fontWeight = if (selectedTab == index) FontWeight.SemiBold else FontWeight.Normal
+                                title,
+                                fontWeight = if (ui.selectedTabIndex == index) FontWeight.SemiBold else FontWeight.Normal
                             )
                         },
                         selectedContentColor = Color.Black,
@@ -91,24 +83,40 @@ fun MentorListScreen(
                 }
             }
 
-            // 리스트 (탭 필터가 실제로 필요하면 여기서 분기)
+            // 리스트
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 96.dp)
             ) {
                 items(
-                    items = page.content,
+                    items = ui.mentors,
                     key = { it.id }
                 ) { user ->
                     MentorItem(user = user)
                     HorizontalDivider(color = Color(0x14000000))
+                }
+
+                if (ui.isLoading && ui.mentors.isEmpty()) {
+                    item {
+                        Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
+
+                if (ui.error != null && ui.mentors.isEmpty()) {
+                    item {
+                        Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                            Text(ui.error!!, color = Color(0xFFB00020))
+                        }
+                    }
                 }
             }
         }
 
         // 하단 CTA
         Button(
-            onClick = { onRequestMentoring() },
+            onClick = { /* TODO: 바텀시트*/ },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(16.dp),
@@ -131,7 +139,7 @@ fun MentorListScreen(
 }
 
 @Composable
-private fun MentorItem(user: MentorUser) {
+private fun MentorItem(user: MentorUserDto) {
     var isBookmarked by remember { mutableStateOf(false) }
 
     Row(
@@ -201,16 +209,16 @@ private fun MentorItem(user: MentorUser) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun PreviewMentorListScreen() {
-    val sample = PageResponse(
-        content = listOf(
-            MentorUser(5, "mentor3", "mentor3@example.com", true),
-            MentorUser(2, "mentor2", "mentor2@example.com", true),
-            MentorUser(1, "mentor1", "mentor1@example.com", true),
-        ),
-        pageNumber = 0, pageSize = 10, totalElements = 3, totalPages = 1, last = true
-    )
-    MaterialTheme { MentorListScreen(page = sample) }
-}
+//@Preview(showBackground = true)
+//@Composable
+//private fun PreviewMentorListScreen() {
+//    val sample = PageResponse(
+//        content = listOf(
+//            MentorUserDto(5, "mentor3", "mentor3@example.com", true),
+//            MentorUser(2, "mentor2", "mentor2@example.com", true),
+//            MentorUser(1, "mentor1", "mentor1@example.com", true),
+//        ),
+//        pageNumber = 0, pageSize = 10, totalElements = 3, totalPages = 1, last = true
+//    )
+//    MaterialTheme { MentorListScreen() }
+//}
