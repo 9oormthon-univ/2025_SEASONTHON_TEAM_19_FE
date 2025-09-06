@@ -1,7 +1,6 @@
 package com.example.synergy.ui.mentorlist
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -32,44 +30,39 @@ import androidx.compose.ui.res.painterResource
 import com.example.synergy.R.drawable.ic_bookmark
 import com.example.synergy.R.drawable.ic_bookmark_selected
 import androidx.compose.foundation.lazy.items
-
-data class PageResponse<T>(
-    val content: List<T>,
-    val pageNumber: Int,
-    val pageSize: Int,
-    val totalElements: Int,
-    val totalPages: Int,
-    val last: Boolean
-)
-
-data class MentorUser(
-    val id: Int,
-    val username: String,
-    val email: String,
-    val mentor: Boolean
-)
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.foundation.layout.FlowRow
 
 @Composable
 fun MentorListScreen(
-    page: PageResponse<MentorUser>,
-    // TODO: 서버에서 받은 실제 카테고리로 교체
-    tabs: List<String> = listOf("전체", "카테", "고리", "카테", "고리"),
-    onRequestMentoring: () -> Unit = {}
+    viewModel: MentorListViewModel = viewModel()
 ) {
-    var selectedTab by remember { mutableIntStateOf(0) }
+    val ui by viewModel.ui.collectAsState()
+    val tabs = remember(ui.categories) { listOf("전체") + ui.categories.map { it.name } }
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(ui.mentors.size, ui.isLoading, ui.isEnd) {
+        if (!ui.isLoading && !ui.isEnd) {
+            val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+            if (lastVisible >= ui.mentors.lastIndex - 3) {
+                viewModel.loadNextPage()
+            }
+        }
+    }
 
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize()) {
 
             // TabRow
             ScrollableTabRow(
-                selectedTabIndex = selectedTab,
+                selectedTabIndex = ui.selectedTabIndex,
                 edgePadding = 16.dp,
                 containerColor = Color.Transparent,
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 indicator = { tabPositions ->
                     TabRowDefaults.SecondaryIndicator(
-                        modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
+                        modifier = Modifier.tabIndicatorOffset(tabPositions[ui.selectedTabIndex]),
                         color = Color.Black
                     )
                 },
@@ -77,12 +70,12 @@ fun MentorListScreen(
             ) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
-                        selected = selectedTab == index,
-                        onClick = { selectedTab = index },
+                        selected = ui.selectedTabIndex == index,
+                        onClick = { viewModel.onTabSelected(index) },
                         text = {
                             Text(
-                                if (index == 0) "전체" else title,
-                                fontWeight = if (selectedTab == index) FontWeight.SemiBold else FontWeight.Normal
+                                title,
+                                fontWeight = if (ui.selectedTabIndex == index) FontWeight.SemiBold else FontWeight.Normal
                             )
                         },
                         selectedContentColor = Color.Black,
@@ -91,30 +84,49 @@ fun MentorListScreen(
                 }
             }
 
-            // 리스트 (탭 필터가 실제로 필요하면 여기서 분기)
+            // 리스트
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 96.dp)
+                contentPadding = PaddingValues(bottom = 96.dp),
+                state = listState
             ) {
                 items(
-                    items = page.content,
+                    items = ui.mentors,
                     key = { it.id }
                 ) { user ->
                     MentorItem(user = user)
                     HorizontalDivider(color = Color(0x14000000))
+                }
+
+                if (ui.isLoading) item {
+                    Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                }
+
+                if (ui.isEnd && ui.mentors.isNotEmpty()) item {
+                    Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                        Text("마지막 페이지입니다", color = Color(0xFF9E9E9E))
+                    }
+                }
+
+                if (ui.error != null && ui.mentors.isEmpty()) item {
+                    Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                        Text(ui.error!!, color = Color(0xFFB00020))
+                    }
                 }
             }
         }
 
         // 하단 CTA
         Button(
-            onClick = { onRequestMentoring() },
+            onClick = { /* TODO: 바텀시트*/ },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(16.dp),
             shape = RoundedCornerShape(28.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF4F4F4F),
+                containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = Color(0xFFFFFFFF),
             ),
             elevation = ButtonDefaults.buttonElevation(
@@ -131,7 +143,7 @@ fun MentorListScreen(
 }
 
 @Composable
-private fun MentorItem(user: MentorUser) {
+private fun MentorItem(user: MentorUserDto) {
     var isBookmarked by remember { mutableStateOf(false) }
 
     Row(
@@ -152,16 +164,15 @@ private fun MentorItem(user: MentorUser) {
 
         Column(Modifier.weight(1f)) {
             // 카테고리 뱃지
-            Surface(
-                color = Color(0xFFEEEEEE),
-                shape = RoundedCornerShape(6.dp)
+            val categoryNames = remember(user.categories) { user.categories.map { it.name } }
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                Text(
-                    text = "카테고리",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color(0xFF666666),
-                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                )
+                categoryNames.forEach { name ->
+                    CategoryChip(text = name)
+                }
             }
 
             Spacer(Modifier.height(6.dp))
@@ -195,22 +206,25 @@ private fun MentorItem(user: MentorUser) {
                     else ic_bookmark
                 ),
                 contentDescription = "bookmark",
-                tint = Color.Unspecified   // TODO: 색상 지정
+                tint = MaterialTheme.colorScheme.primary
             )
         }
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-private fun PreviewMentorListScreen() {
-    val sample = PageResponse(
-        content = listOf(
-            MentorUser(5, "mentor3", "mentor3@example.com", true),
-            MentorUser(2, "mentor2", "mentor2@example.com", true),
-            MentorUser(1, "mentor1", "mentor1@example.com", true),
-        ),
-        pageNumber = 0, pageSize = 10, totalElements = 3, totalPages = 1, last = true
-    )
-    MaterialTheme { MentorListScreen(page = sample) }
+private fun CategoryChip(text: String) {
+    Surface(
+        color = Color(0xFFEEEEEE),
+        shape = RoundedCornerShape(6.dp)
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelSmall,
+            color = Color(0xFF666666),
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+            maxLines = 1,
+            overflow = TextOverflow.Clip
+        )
+    }
 }

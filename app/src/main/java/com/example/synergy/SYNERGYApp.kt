@@ -14,6 +14,7 @@ import com.example.synergy.ui.component.SYNERGYNavigationBar
 import com.example.synergy.ui.component.SYNERGYTopBar
 import com.example.synergy.ui.home.HomeScreen
 import com.example.synergy.ui.lecture.LectureScreen
+import com.example.synergy.ui.mentorlist.MentorListScreen
 import com.example.synergy.ui.signin.SignInScreen
 import com.example.synergy.ui.signup.SignUpScreen
 import com.example.synergy.ui.user.UserScreen
@@ -46,6 +47,9 @@ fun SYNERGYApp() {
             }
             composable(route = NavigationRoute.Lecture.route) {
                 LectureScreen()
+            }
+            composable(route = NavigationRoute.Mentoring.route) {
+                MentorListScreen()
             }
             composable(route = NavigationRoute.User.route) {
                 UserScreen()
