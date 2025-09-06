@@ -11,9 +11,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.synergy.data.model.Category
 import com.example.synergy.ui.theme.SYNERGYTheme
 
 class MainActivity : ComponentActivity() {
+
+    companion object{
+        var categories = emptyList<Category>()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

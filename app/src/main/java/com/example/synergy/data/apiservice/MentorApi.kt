@@ -18,7 +18,7 @@ interface MentorApi {
     suspend fun getMentors(
         @Query("page") page: Int,
         @Query("size") size: Int,
-        @Query("sort") sort: String = "id,asc"
+        @Query("sort") sort: String = "id,asc",
     ): MentorPageResponse
 
     // 선택한 카테고리에 해당하는 멘토 리스트 보기
@@ -27,10 +27,20 @@ interface MentorApi {
         @Query("categoryCode") categoryCode: String,
         @Query("page") page: Int,
         @Query("size") size: Int,
-        @Query("sort") sort: String = "id,asc"
+        @Query("sort") sort: String = "id,asc",
     ): MentorPageResponse
 
     // 멘토 상세 보기
     @GET("api/mentors/{id}")
     suspend fun getMentorDetail(@Path("id") id: Int): MentorDetail
+
+    @GET("/api/mentors?size=20&sort=mentoringCount,desc")
+    suspend fun getFavoriteMentors(): MentorPageResponse
+
+    @GET("api/mentors")
+    suspend fun getRecommendMentors(
+        @Query("page") page: Int,
+        @Query("size") size: Int,
+        @Query("sort") sort: String = "id,asc",
+    ): MentorPageResponse
 }

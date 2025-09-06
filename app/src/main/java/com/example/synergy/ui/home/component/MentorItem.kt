@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,25 +29,29 @@ fun MentorItem(
     mentor: Mentor,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(dimensionResource(R.dimen.screen_padding)),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             painter = painterResource(R.drawable.ic_launcher_background),
             contentDescription = null,
             modifier = modifier
-                .padding(dimensionResource(R.dimen.screen_padding))
+
                 .size(60.dp)
                 .clip(CircleShape),
         )
 
+        Spacer(modifier = Modifier.width(20.dp))
         Column {
             Text(text = mentor.name)
             Spacer(modifier = modifier.height(5.dp))
             Text(
                 text = mentor.introduction ?: "",
                 fontSize = 12.sp,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2,
             )
         }
     }
