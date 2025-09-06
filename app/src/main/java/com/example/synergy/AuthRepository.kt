@@ -1,5 +1,7 @@
 package com.example.synergy
 
+import com.example.synergy.ui.signin.SignInRequest
+import com.example.synergy.ui.signin.SignInResponse
 import com.example.synergy.ui.signup.SignUpRequest
 
 class AuthRepository(private val api: AuthApi) {
@@ -16,5 +18,13 @@ class AuthRepository(private val api: AuthApi) {
     }
 
     // 로그인
+    suspend fun signIn(username: String, password: String): Result<SignInResponse> {
+        val res = api.signIn(SignInRequest(username, password))
+        return if (res.isSuccessful && res.body() != null) {
+            Result.success(res.body()!!)
+        } else {
+            Result.failure(Exception("로그인 실패 (${res.code()})"))
+        }
+    }
 
 }
