@@ -86,7 +86,7 @@ fun SYNERGYDefaultTopBar(
             if (enableNavigationIcon) {
                 IconButton(onClick = { onBackClick() }) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        painter = painterResource(id = R.drawable.ic_back),
                         contentDescription = "BackIconButton"
                     )
                 }
