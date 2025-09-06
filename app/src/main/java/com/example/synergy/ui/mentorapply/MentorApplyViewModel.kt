@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import com.example.synergy.data.model.MentorDetail
 
 data class MentorApplyUiState(
     val name: String = "",
@@ -33,6 +34,19 @@ data class MentorApplyUiState(
 class MentorApplyViewModel(
     private val repository: MentorRepository = MentorRepository()
 ) : ViewModel() {
+
+    private val _mentor = MutableStateFlow<MentorDetail?>(null)
+    val mentor: StateFlow<MentorDetail?> = _mentor
+
+    fun loadMentor(mentorId: Int) {
+        viewModelScope.launch {
+            try {
+                _mentor.value = repository.getMentorDetail(mentorId)
+            } catch (e: Exception) {
+                // 필요하면 에러 상태 처리
+            }
+        }
+    }
 
     private val _ui = MutableStateFlow(MentorApplyUiState())
     val ui: StateFlow<MentorApplyUiState> = _ui
