@@ -3,6 +3,8 @@ package com.example.synergy.data.repository
 import com.example.synergy.data.RetrofitClient
 import com.example.synergy.data.apiservice.MentorApi
 import com.example.synergy.data.model.Category
+import com.example.synergy.data.model.MentorApplicationRequest
+import com.example.synergy.data.model.MentorApplicationResponse
 import com.example.synergy.data.model.MentorPageResponse
 
 class MentorRepository(
@@ -21,4 +23,9 @@ class MentorRepository(
 
     // 멘토 상세 보기
     suspend fun getMentorDetail(id: Int) = api.getMentorDetail(id)
+
+    // 멘토링 신청
+    suspend fun submit(mentorId: Int, req: MentorApplicationRequest): MentorApplicationResponse {
+        return api.applyMentoring(mentorId, req)
+    }
 }

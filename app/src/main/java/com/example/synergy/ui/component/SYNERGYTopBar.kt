@@ -52,15 +52,12 @@ fun SYNERGYTopBar(
         )
         NavigationRoute.MentorDetail.route -> SYNERGYDefaultTopBar(
             enableNavigationIcon = true,
-            onBackClick = {
-                val ok = navController.popBackStack()
-                if (!ok) {
-                    navController.navigate(NavigationRoute.Mentoring.route) {
-                        popUpTo(NavigationRoute.Mentoring.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                }
-            }
+            onBackClick = { navController.popBackStack() }
+        )
+        NavigationRoute.MentorApply.route -> SYNERGYDefaultTopBar(
+            title = stringResource(R.string.apply_mentor),
+            enableNavigationIcon = true,
+            onBackClick = { navController.popBackStack() }
         )
     }
 }

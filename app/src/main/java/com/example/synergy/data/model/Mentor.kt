@@ -32,6 +32,24 @@ data class MentorDetail(
     @SerializedName("introduction") val introduction: String?
 )
 
+data class MentorApplicationRequest(
+    @SerializedName("applicantName") val applicantName: String,
+    @SerializedName("phone") val phone: String,
+    @SerializedName("scheduledAt") val scheduledAt: String, // "yyyy-MM-dd HH:mm"
+    @SerializedName("content") val content: String,
+)
+
+data class MentorApplicationResponse(
+    @SerializedName("id") val id: Long,
+    @SerializedName("mentorId") val mentorId: Int,
+    @SerializedName("mentorUsername") val mentorUsername: String?,
+    @SerializedName("applicantName") val applicantName: String,
+    @SerializedName("phone") val phone: String,
+    @SerializedName("scheduledAt") val scheduledAt: String,
+    @SerializedName("content") val content: String,
+    @SerializedName("createdAt") val createdAt: String
+)
+
 data class Category(
     @SerializedName("code") val code: String,
     @SerializedName("name") val category: String,
