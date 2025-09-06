@@ -1,14 +1,21 @@
 package com.example.synergy.ui.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,7 +36,13 @@ fun SYNERGYTopBar(
     navController: NavController,
 ) {
     when (currentBackStackEntry?.destination?.route) {
-        NavigationRoute.Home.route -> SYNERGYDefaultTopBar()
+        NavigationRoute.Home.route -> SYNERGYImageTopBar(
+            listOf(
+                R.drawable.logo,
+                R.drawable.logo_text
+            )
+        )
+
         NavigationRoute.Lecture.route -> SYNERGYDefaultTopBar(
             title = stringResource(R.string.lecture),
             actionIcons = listOf(
@@ -42,6 +55,7 @@ fun SYNERGYTopBar(
             ),
             onBackClick = { navController.popBackStack() }
         )
+
         NavigationRoute.Mentoring.route -> SYNERGYDefaultTopBar(
             title = stringResource(R.string.mentoring),
             actionIcons = listOf(
@@ -50,10 +64,12 @@ fun SYNERGYTopBar(
                 }
             )
         )
+
         NavigationRoute.MentorDetail.route -> SYNERGYDefaultTopBar(
             enableNavigationIcon = true,
             onBackClick = { navController.popBackStack() }
         )
+
         NavigationRoute.MentorApply.route -> SYNERGYDefaultTopBar(
             title = stringResource(R.string.apply_mentor),
             enableNavigationIcon = true,
@@ -104,4 +120,19 @@ fun SYNERGYDefaultTopBar(
             }
         },
     )
+}
+
+@Composable
+fun SYNERGYImageTopBar(imageDrawables: List<Int>) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = dimensionResource(R.dimen.screen_padding))
+            .windowInsetsPadding(WindowInsets.safeDrawing),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        imageDrawables.forEach { imageDrawable ->
+            Image(painter = painterResource(imageDrawable), contentDescription = null)
+        }
+    }
 }
