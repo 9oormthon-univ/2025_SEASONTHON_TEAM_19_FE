@@ -1,6 +1,7 @@
 package com.example.synergy.ui.mentorlist
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,19 +35,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.FlowRow
 import com.example.synergy.data.model.Mentor
-import com.example.synergy.ui.theme.Green1
-import com.example.synergy.ui.theme.Green2
-import com.example.synergy.ui.theme.Green3
-import com.example.synergy.ui.theme.Green4
-import com.example.synergy.ui.theme.Green5
-import com.example.synergy.ui.theme.Green6
-import com.example.synergy.ui.theme.Green7
-import com.example.synergy.ui.theme.Green8
-import com.example.synergy.ui.theme.MainGreen
+import com.example.synergy.ui.theme.White
+import com.example.synergy.ui.component.CategoryChip
 
 @Composable
 fun MentorListScreen(
     viewModel: MentorListViewModel = viewModel(),
+    onMentorClick: (Int) -> Unit = {}
 ) {
     val ui by viewModel.ui.collectAsState()
     val tabs = remember(ui.categories) { listOf("전체") + ui.categories.map { it.category } }
@@ -104,7 +99,10 @@ fun MentorListScreen(
                     items = ui.mentors,
                     key = { it.id }
                 ) { user ->
-                    MentorItem(user = user)
+                    MentorItem(
+                        user = user,
+                        onClick = { onMentorClick(user.id) }
+                        )
                     HorizontalDivider(color = Color(0x14000000))
                 }
 
@@ -152,7 +150,7 @@ fun MentorListScreen(
             shape = RoundedCornerShape(28.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color(0xFFFFFFFF),
+                contentColor = White,
             ),
             elevation = ButtonDefaults.buttonElevation(
                 defaultElevation = 8.dp
@@ -169,12 +167,16 @@ fun MentorListScreen(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun MentorItem(user: Mentor) {
+private fun MentorItem(
+    user: Mentor,
+    onClick: () -> Unit = {}
+) {
     var isBookmarked by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -235,36 +237,5 @@ private fun MentorItem(user: Mentor) {
                 tint = MaterialTheme.colorScheme.primary
             )
         }
-    }
-}
-
-private fun categoryColor(code: String): Color {
-    return when (code) {
-        "AI" -> Green1
-        "DIGITAL_UTIL" -> Green2
-        "HOBBY" -> Green3
-        "JOB_WORK" -> Green4
-        "CARE" -> Green5
-        "EXERCISE" -> Green6
-        "LIFE" -> Green7
-        "MIND" -> Green8
-        else -> MainGreen
-    }
-}
-
-@Composable
-private fun CategoryChip(code: String, name: String) {
-    Surface(
-        color = categoryColor(code),
-        shape = RoundedCornerShape(6.dp)
-    ) {
-        Text(
-            text = name,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-            maxLines = 1,
-            overflow = TextOverflow.Clip
-        )
     }
 }
