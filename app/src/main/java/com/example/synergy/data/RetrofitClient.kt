@@ -1,4 +1,4 @@
-package com.example.synergy
+package com.example.synergy.data
 
 import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
