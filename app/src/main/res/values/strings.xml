@@ -5,4 +5,7 @@
     <string name="mentoring">멘토링</string>
     <string name="lecture_room">강의실</string>
     <string name="user">마이페이지</string>
+    <string name="mentoring_guideline">멘토링받으러 가기</string>
+    <string name="user_mentoring_recommend">나에게 맞는 멘토를 추천해줘요</string>
+    <string name="favorite_mentor">인기 멘토</string>
 </resources>
