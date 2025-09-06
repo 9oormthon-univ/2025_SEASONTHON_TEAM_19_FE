@@ -114,8 +114,8 @@ fun MentorListScreen(
                 .padding(16.dp),
             shape = RoundedCornerShape(28.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Black,   // 배경색
-                contentColor = Color.White      // 텍스트 색
+                containerColor = Color(0xFF4F4F4F),
+                contentColor = Color(0xFFFFFFFF),
             ),
             elevation = ButtonDefaults.buttonElevation(
                 defaultElevation = 8.dp
@@ -145,7 +145,7 @@ private fun MentorItem(user: MentorUser) {
             modifier = Modifier
                 .size(56.dp)
                 .clip(CircleShape)
-                .background(Color(0xFFE0E0E0))
+                .background(Color(0xFFB0B0B0))
         )
 
         Spacer(Modifier.width(12.dp))
@@ -153,13 +153,13 @@ private fun MentorItem(user: MentorUser) {
         Column(Modifier.weight(1f)) {
             // 카테고리 뱃지
             Surface(
-                color = Color(0x0F000000),
+                color = Color(0xFFEEEEEE),
                 shape = RoundedCornerShape(6.dp)
             ) {
                 Text(
                     text = "카테고리",
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color(0xFF7A7A7A),
+                    color = Color(0xFF666666),
                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                 )
             }
@@ -170,7 +170,7 @@ private fun MentorItem(user: MentorUser) {
             Text(
                 text = user.username,
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = Color(0xFF323232),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -181,7 +181,7 @@ private fun MentorItem(user: MentorUser) {
             Text(
                 text = user.email,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = Color(0xFF323232),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
