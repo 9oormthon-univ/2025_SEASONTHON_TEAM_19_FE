@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.implementation
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -62,4 +64,13 @@ dependencies {
 
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.moshi)
+    implementation(libs.logging.interceptor)
+
+    implementation(libs.androidx.lifecycle.viewmodel.ktx.v284)
+    implementation(libs.kotlinx.coroutines.android)
+
+    implementation(libs.moshi.kotlin)
 }

@@ -19,6 +19,22 @@ fun SignUpScreen(
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
+    val uiState by viewModel.uiState.collectAsState()
+
+    // 성공 시 이동
+    LaunchedEffect(uiState.success) {
+        if (uiState.success) onSignInClick()
+    }
+
+    // 에러 스낵바
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearError()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -69,10 +85,13 @@ fun SignUpScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
+            enabled = !uiState.loading,
             onClick = {
-                // TODO: 비밀번호 검증 로직
-                if (password == confirmPassword) {
-                    onSignInClick()
+                if (password != confirmPassword) {
+                    viewModel.clearError()
+                    // coroutineScope.launch { snackbarHostState.showSnackbar("비밀번호가 일치하지 않습니다.") }
+                } else {
+                    viewModel.signUp(email.trim(), username.trim(), password)
                 }
             },
             modifier = Modifier.fillMaxWidth()
