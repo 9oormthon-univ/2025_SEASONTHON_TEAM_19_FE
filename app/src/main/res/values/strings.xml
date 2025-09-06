@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SYNERGY</string>
+    <string name="home">홈</string>
+    <string name="lecture">강연</string>
+    <string name="mentoring">멘토링</string>
+    <string name="lecture_room">강의실</string>
+    <string name="user">마이페이지</string>
 </resources>
