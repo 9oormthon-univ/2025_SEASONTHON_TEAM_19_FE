@@ -2,22 +2,11 @@ package com.example.synergy.ui.mentorlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.synergy.data.MentorRepository
+import com.example.synergy.data.repository.MentorRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
-data class MentorListUiState(
-    val categories: List<MentorCategoryDto> = emptyList(),
-    val selectedTabIndex: Int = 0,   // 0 = "전체"
-    val isLoading: Boolean = false,
-    val error: String? = null,
-    val mentors: List<MentorUserDto> = emptyList(),
-    val page: Int = 0,
-    val pageSize: Int = 10,
-    val isEnd: Boolean = false
-)
 
 class MentorListViewModel(
     private val repo: MentorRepository = MentorRepository()
