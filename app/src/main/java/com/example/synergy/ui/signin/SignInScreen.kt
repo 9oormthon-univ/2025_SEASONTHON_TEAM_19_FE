@@ -18,6 +18,23 @@ fun SignInScreen(
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearError()
+        }
+    }
+
+    LaunchedEffect(uiState.token) {
+        if (uiState.token != null) {
+            // 로그인 성공 시 토큰 저장 or 다음 화면 이동
+            onHomeClick()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -49,9 +66,16 @@ fun SignInScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-            onClick = { onHomeClick() },
+            onClick = { viewModel.signIn(username, password) },
+            enabled = !uiState.loading,
             modifier = Modifier.fillMaxWidth()
         ) {
+            if (uiState.loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp).padding(end = 8.dp),
+                    strokeWidth = 2.dp
+                )
+            }
             Text("로그인")
         }
 
