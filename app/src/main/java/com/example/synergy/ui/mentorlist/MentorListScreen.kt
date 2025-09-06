@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -31,24 +30,26 @@ import androidx.compose.ui.res.painterResource
 import com.example.synergy.R.drawable.ic_bookmark
 import com.example.synergy.R.drawable.ic_bookmark_selected
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.lifecycle.viewmodel.compose.viewModel
-
-data class PageResponse<T>(
-    val content: List<T>,
-    val pageNumber: Int,
-    val pageSize: Int,
-    val totalElements: Int,
-    val totalPages: Int,
-    val last: Boolean
-)
+import androidx.compose.foundation.layout.FlowRow
 
 @Composable
 fun MentorListScreen(
     viewModel: MentorListViewModel = viewModel()
 ) {
     val ui by viewModel.ui.collectAsState()
-
     val tabs = remember(ui.categories) { listOf("전체") + ui.categories.map { it.name } }
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(ui.mentors.size, ui.isLoading, ui.isEnd) {
+        if (!ui.isLoading && !ui.isEnd) {
+            val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+            if (lastVisible >= ui.mentors.lastIndex - 3) {
+                viewModel.loadNextPage()
+            }
+        }
+    }
 
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize()) {
@@ -86,7 +87,8 @@ fun MentorListScreen(
             // 리스트
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 96.dp)
+                contentPadding = PaddingValues(bottom = 96.dp),
+                state = listState
             ) {
                 items(
                     items = ui.mentors,
@@ -96,19 +98,21 @@ fun MentorListScreen(
                     HorizontalDivider(color = Color(0x14000000))
                 }
 
-                if (ui.isLoading && ui.mentors.isEmpty()) {
-                    item {
-                        Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
-                        }
+                if (ui.isLoading) item {
+                    Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
                     }
                 }
 
-                if (ui.error != null && ui.mentors.isEmpty()) {
-                    item {
-                        Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
-                            Text(ui.error!!, color = Color(0xFFB00020))
-                        }
+                if (ui.isEnd && ui.mentors.isNotEmpty()) item {
+                    Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                        Text("마지막 페이지입니다", color = Color(0xFF9E9E9E))
+                    }
+                }
+
+                if (ui.error != null && ui.mentors.isEmpty()) item {
+                    Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                        Text(ui.error!!, color = Color(0xFFB00020))
                     }
                 }
             }
@@ -122,7 +126,7 @@ fun MentorListScreen(
                 .padding(16.dp),
             shape = RoundedCornerShape(28.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF4F4F4F),
+                containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = Color(0xFFFFFFFF),
             ),
             elevation = ButtonDefaults.buttonElevation(
@@ -160,16 +164,15 @@ private fun MentorItem(user: MentorUserDto) {
 
         Column(Modifier.weight(1f)) {
             // 카테고리 뱃지
-            Surface(
-                color = Color(0xFFEEEEEE),
-                shape = RoundedCornerShape(6.dp)
+            val categoryNames = remember(user.categories) { user.categories.map { it.name } }
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                Text(
-                    text = "카테고리",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color(0xFF666666),
-                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                )
+                categoryNames.forEach { name ->
+                    CategoryChip(text = name)
+                }
             }
 
             Spacer(Modifier.height(6.dp))
@@ -203,22 +206,25 @@ private fun MentorItem(user: MentorUserDto) {
                     else ic_bookmark
                 ),
                 contentDescription = "bookmark",
-                tint = Color.Unspecified   // TODO: 색상 지정
+                tint = MaterialTheme.colorScheme.primary
             )
         }
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//private fun PreviewMentorListScreen() {
-//    val sample = PageResponse(
-//        content = listOf(
-//            MentorUserDto(5, "mentor3", "mentor3@example.com", true),
-//            MentorUser(2, "mentor2", "mentor2@example.com", true),
-//            MentorUser(1, "mentor1", "mentor1@example.com", true),
-//        ),
-//        pageNumber = 0, pageSize = 10, totalElements = 3, totalPages = 1, last = true
-//    )
-//    MaterialTheme { MentorListScreen() }
-//}
+@Composable
+private fun CategoryChip(text: String) {
+    Surface(
+        color = Color(0xFFEEEEEE),
+        shape = RoundedCornerShape(6.dp)
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelSmall,
+            color = Color(0xFF666666),
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+            maxLines = 1,
+            overflow = TextOverflow.Clip
+        )
+    }
+}

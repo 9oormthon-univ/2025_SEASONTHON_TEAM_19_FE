@@ -13,7 +13,10 @@ data class MentorListUiState(
     val selectedTabIndex: Int = 0,   // 0 = "전체"
     val isLoading: Boolean = false,
     val error: String? = null,
-    val mentors: List<MentorUserDto> = emptyList()
+    val mentors: List<MentorUserDto> = emptyList(),
+    val page: Int = 0,
+    val pageSize: Int = 10,
+    val isEnd: Boolean = false
 )
 
 class MentorListViewModel(
@@ -27,6 +30,7 @@ class MentorListViewModel(
         loadCategories()
     }
 
+    // 카테고리 리스트
     fun loadCategories() {
         viewModelScope.launch {
             _ui.update { it.copy(isLoading = true, error = null) }
@@ -41,9 +45,37 @@ class MentorListViewModel(
 
     fun onTabSelected(index: Int) {
         _ui.update { it.copy(selectedTabIndex = index) }
-        // TODO: 선택한 탭(카테고리)에 맞게 멘토 리스트 API 호출 붙이기
-        // val code = selectedCategoryCodeOrNull()
-        // loadMentors(category = code)
+        refreshMentors()
+    }
+
+    fun refreshMentors() {
+        _ui.update { it.copy(mentors = emptyList(), page = 0, isEnd = false, error = null) }
+        loadNextPage()
+    }
+
+    fun loadNextPage() {
+        val s = _ui.value
+        if (s.isLoading || s.isEnd) return
+
+        viewModelScope.launch {
+            _ui.update { it.copy(isLoading = true, error = null) }
+            try {
+                val res = selectedCategoryCodeOrNull()?.let { code ->
+                    repo.getMentorsByCategory(code, page = s.page, size = s.pageSize)
+                } ?: repo.getMentors(page = s.page, size = s.pageSize)
+
+                _ui.update {
+                    it.copy(
+                        mentors = it.mentors + res.content,
+                        page = s.page + 1,
+                        isEnd = res.last,
+                        isLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                _ui.update { it.copy(isLoading = false, error = e.message ?: "멘토 목록 로드 실패") }
+            }
+        }
     }
 
     fun selectedCategoryCodeOrNull(): String? {
