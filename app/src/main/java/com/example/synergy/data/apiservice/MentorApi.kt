@@ -1,8 +1,10 @@
 package com.example.synergy.data.apiservice
 
 import com.example.synergy.data.model.Category
+import com.example.synergy.data.model.MentorDetail
 import com.example.synergy.data.model.MentorPageResponse
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface MentorApi {
@@ -27,4 +29,8 @@ interface MentorApi {
         @Query("size") size: Int,
         @Query("sort") sort: String = "id,asc"
     ): MentorPageResponse
+
+    // 멘토 상세 보기
+    @GET("api/mentors/{id}")
+    suspend fun getMentorDetail(@Path("id") id: Int): MentorDetail
 }

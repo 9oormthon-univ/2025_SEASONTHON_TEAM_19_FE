@@ -23,6 +23,15 @@ data class Mentor(
     @SerializedName("introduction") val introduction: String?,
 )
 
+data class MentorDetail(
+    @SerializedName("id") val id: Int,
+    @SerializedName("username") val name: String,
+    @SerializedName("categories") val categories: List<Category>,
+    @SerializedName("education") val education: String?,
+    @SerializedName("career") val career: String?,
+    @SerializedName("introduction") val introduction: String?
+)
+
 data class Category(
     @SerializedName("code") val code: String,
     @SerializedName("name") val category: String,
