@@ -2,8 +2,8 @@ package com.example.synergy.ui.signin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.synergy.AuthRepository
-import com.example.synergy.RetrofitClient
+import com.example.synergy.data.AuthRepository
+import com.example.synergy.data.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

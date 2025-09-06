@@ -1,4 +1,4 @@
-package com.example.synergy
+package com.example.synergy.data
 
 import com.example.synergy.ui.signin.SignInRequest
 import com.example.synergy.ui.signin.SignInResponse
