@@ -6,14 +6,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.synergy.ui.theme.SYNERGYTheme
 
 @Composable
 fun SignInScreen(
     viewModel: SignInViewModel = viewModel(),
     onSignUpClick: () -> Unit,
-    onHomeClick: () -> Unit
+    onHomeClick: () -> Unit,
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -72,7 +74,9 @@ fun SignInScreen(
         ) {
             if (uiState.loading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp).padding(end = 8.dp),
+                    modifier = Modifier
+                        .size(20.dp)
+                        .padding(end = 8.dp),
                     strokeWidth = 2.dp
                 )
             }
@@ -87,5 +91,13 @@ fun SignInScreen(
         ) {
             Text("회원가입")
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SignInScreenPreview() {
+    SYNERGYTheme {
+        SignInScreen(viewModel(), {}, {})
     }
 }
