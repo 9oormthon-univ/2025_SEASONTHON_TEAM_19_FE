@@ -43,6 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.synergy.R
 import com.example.synergy.data.model.Lecture
+import com.example.synergy.ui.component.categoryColor
+import com.example.synergy.ui.theme.Gray80
 import com.example.synergy.ui.theme.SYNERGYTheme
 
 @Composable
@@ -145,7 +147,7 @@ private fun LectureCard(
         ) {
             // 카테고리 라벨
             Surface(
-                color = Color(0xFFEEEEEE),
+                color = categoryColor(lecture.category),
                 shape = RoundedCornerShape(6.dp),
                 modifier = Modifier
                     .padding(10.dp)
@@ -154,7 +156,7 @@ private fun LectureCard(
                 Text(
                     text = categories.find { it.first == lecture.category }?.second ?: "전체",
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color(0xFF666666),
+                    color = Gray80,
                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                 )
             }
@@ -169,7 +171,7 @@ private fun LectureCard(
                 Icon(
                     painter = painterResource(R.drawable.ic_bookmark),
                     contentDescription = "bookmark",
-                    tint = Color.Unspecified   // TODO: 색상 지정
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
 
