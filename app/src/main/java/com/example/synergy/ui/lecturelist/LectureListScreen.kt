@@ -98,11 +98,7 @@ fun LectureListScreen(
 
 
         val filtered =
-//            if (selectedTab == 0) {
-//            uiState.content
-//        } else {
             uiState.content.filter { selectedTab == 0 || it.category == categories[selectedTab].first }
-//        }
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -117,6 +113,7 @@ fun LectureListScreen(
             ) { lecture ->
                 LectureCard(
                     lecture = lecture,
+                    categories = categories,
                     onClick = { onCardClick(lecture) },
                     onBookmarkClick = {
 
@@ -130,6 +127,7 @@ fun LectureListScreen(
 @Composable
 private fun LectureCard(
     lecture: Lecture,
+    categories: List<Pair<String, String>>,
     onClick: () -> Unit,
     onBookmarkClick: () -> Unit,
 ) {
@@ -154,7 +152,7 @@ private fun LectureCard(
                     .align(Alignment.TopStart)
             ) {
                 Text(
-                    text = lecture.category,
+                    text = categories.find { it.first == lecture.category }?.second ?: "전체",
                     style = MaterialTheme.typography.labelSmall,
                     color = Color(0xFF666666),
                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
