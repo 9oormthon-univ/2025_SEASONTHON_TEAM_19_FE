@@ -28,6 +28,11 @@ class MentorRepository(
     // 멘토 상세 보기
     suspend fun getMentorDetail(id: Int) = api.getMentorDetail(id)
 
+    // 멘토링 신청
+    suspend fun submit(mentorId: Int, req: MentorApplicationRequest): MentorApplicationResponse {
+        return api.applyMentoring(mentorId, req)
+    }
+
     suspend fun getFavoriteMentors(): MentorPageResponse = api.getFavoriteMentors()
 
     suspend fun getRecommendMentors(): MentorPageResponse =
