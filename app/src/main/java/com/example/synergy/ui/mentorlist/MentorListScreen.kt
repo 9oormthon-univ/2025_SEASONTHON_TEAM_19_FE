@@ -1,6 +1,7 @@
 package com.example.synergy.ui.mentorlist
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,10 +35,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.FlowRow
 import com.example.synergy.data.model.Mentor
+import com.example.synergy.ui.theme.White
+import com.example.synergy.ui.component.CategoryChip
 
 @Composable
 fun MentorListScreen(
     viewModel: MentorListViewModel = viewModel(),
+    onMentorClick: (Int) -> Unit = {}
 ) {
     val ui by viewModel.ui.collectAsState()
     val tabs = remember(ui.categories) { listOf("전체") + ui.categories.map { it.category } }
@@ -95,7 +99,10 @@ fun MentorListScreen(
                     items = ui.mentors,
                     key = { it.id }
                 ) { user ->
-                    MentorItem(user = user)
+                    MentorItem(
+                        user = user,
+                        onClick = { onMentorClick(user.id) }
+                        )
                     HorizontalDivider(color = Color(0x14000000))
                 }
 
@@ -143,7 +150,7 @@ fun MentorListScreen(
             shape = RoundedCornerShape(28.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color(0xFFFFFFFF),
+                contentColor = White,
             ),
             elevation = ButtonDefaults.buttonElevation(
                 defaultElevation = 8.dp
@@ -160,12 +167,16 @@ fun MentorListScreen(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun MentorItem(user: Mentor) {
+private fun MentorItem(
+    user: Mentor,
+    onClick: () -> Unit = {}
+) {
     var isBookmarked by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -181,14 +192,14 @@ private fun MentorItem(user: Mentor) {
 
         Column(Modifier.weight(1f)) {
             // 카테고리 뱃지
-            val categoryNames = remember(user.categories) { user.categories.map { it.category } }
+            val categories = remember(user.categories) { user.categories }
 
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                categoryNames.forEach { name ->
-                    CategoryChip(text = name)
+                categories.forEach { cat ->
+                    CategoryChip(code = cat.code, name = cat.category)
                 }
             }
 
@@ -226,22 +237,5 @@ private fun MentorItem(user: Mentor) {
                 tint = MaterialTheme.colorScheme.primary
             )
         }
-    }
-}
-
-@Composable
-private fun CategoryChip(text: String) {
-    Surface(
-        color = Color(0xFFEEEEEE),
-        shape = RoundedCornerShape(6.dp)
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelSmall,
-            color = Color(0xFF666666),
-            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-            maxLines = 1,
-            overflow = TextOverflow.Clip
-        )
     }
 }

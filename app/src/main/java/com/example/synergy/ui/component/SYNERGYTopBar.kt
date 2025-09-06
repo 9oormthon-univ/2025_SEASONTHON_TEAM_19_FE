@@ -42,6 +42,26 @@ fun SYNERGYTopBar(
             ),
             onBackClick = { navController.popBackStack() }
         )
+        NavigationRoute.Mentoring.route -> SYNERGYDefaultTopBar(
+            title = stringResource(R.string.mentoring),
+            actionIcons = listOf(
+                TopBarAction(R.drawable.baseline_search_24, "search_button") {
+
+                }
+            )
+        )
+        NavigationRoute.MentorDetail.route -> SYNERGYDefaultTopBar(
+            enableNavigationIcon = true,
+            onBackClick = {
+                val ok = navController.popBackStack()
+                if (!ok) {
+                    navController.navigate(NavigationRoute.Mentoring.route) {
+                        popUpTo(NavigationRoute.Mentoring.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            }
+        )
     }
 }
 
