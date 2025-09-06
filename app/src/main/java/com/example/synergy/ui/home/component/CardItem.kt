@@ -29,7 +29,7 @@ import com.example.synergy.R
 @Composable
 fun CardItem(
     modifier: Modifier,
-    item: String,
+    item: Pair<String, String>,
 ) {
     Card(
         modifier = modifier.width(300.dp),
@@ -56,10 +56,10 @@ fun CardItem(
 
             Spacer(modifier = modifier.width(20.dp))
             Column {
-                Text(text = item)
+                Text(text = item.first)
                 Spacer(modifier = modifier.height(5.dp))
                 Text(
-                    text = item,
+                    text = item.second,
                     fontSize = 12.sp,
                     overflow = TextOverflow.Ellipsis
                 )
