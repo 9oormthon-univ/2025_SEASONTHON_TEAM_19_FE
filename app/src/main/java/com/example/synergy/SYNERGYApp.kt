@@ -16,6 +16,7 @@ import com.example.synergy.ui.component.SYNERGYNavigationBar
 import com.example.synergy.ui.component.SYNERGYTopBar
 import com.example.synergy.ui.home.HomeScreen
 import com.example.synergy.ui.lecture.LectureScreen
+import com.example.synergy.ui.mentorapply.MentorApplyScreen
 import com.example.synergy.ui.mentordetail.MentorDetailScreen
 import com.example.synergy.ui.mentorlist.MentorListScreen
 import com.example.synergy.ui.signin.SignInScreen
@@ -67,7 +68,23 @@ fun SYNERGYApp() {
                 arguments = listOf(navArgument("id") { type = NavType.IntType })
             ) { backStackEntry ->
                 val id = backStackEntry.arguments?.getInt("id") ?: return@composable
-                MentorDetailScreen(mentorId = id)
+                MentorDetailScreen(
+                    mentorId = id,
+                    onApplyClick = {
+                        navController.navigate(NavigationRoute.MentorApply.routeWithId(id))
+                    }
+                )
+            }
+
+            composable(
+                route = NavigationRoute.MentorApply.route,
+                arguments = listOf(navArgument("mentorId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val mentorId = backStackEntry.arguments?.getInt("mentorId") ?: return@composable
+                MentorApplyScreen(
+                    mentorId = mentorId,
+                    onSubmitted = { navController.popBackStack() } // TODO: 성공 시 성공 화면
+                )
             }
         }
     }

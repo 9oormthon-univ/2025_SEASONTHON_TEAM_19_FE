@@ -11,5 +11,8 @@ sealed class NavigationRoute(val route: String) {
     data object MentorDetail : NavigationRoute("mentor/{id}") {
         fun routeWithId(id: Int) = "mentor/$id"
     }
+    data object MentorApply : NavigationRoute("mentor-apply/{mentorId}") {
+        fun routeWithId(id: Int) = "mentor-apply/$id"
+    }
 
 }

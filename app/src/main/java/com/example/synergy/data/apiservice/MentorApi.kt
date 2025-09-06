@@ -1,9 +1,13 @@
 package com.example.synergy.data.apiservice
 
 import com.example.synergy.data.model.Category
+import com.example.synergy.data.model.MentorApplicationRequest
+import com.example.synergy.data.model.MentorApplicationResponse
 import com.example.synergy.data.model.MentorDetail
 import com.example.synergy.data.model.MentorPageResponse
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -33,4 +37,11 @@ interface MentorApi {
     // 멘토 상세 보기
     @GET("api/mentors/{id}")
     suspend fun getMentorDetail(@Path("id") id: Int): MentorDetail
+
+    // 멘토링 신청
+    @POST("api/mentors/{mentorId}/applications")
+    suspend fun applyMentoring(
+        @Path("mentorId") mentorId: Int,
+        @Body body: MentorApplicationRequest
+    ): MentorApplicationResponse
 }

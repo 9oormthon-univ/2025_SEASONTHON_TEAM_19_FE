@@ -1,5 +1,6 @@
 package com.example.synergy.ui.mentorlist
 
+import android.R.attr.maxLines
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -216,9 +217,9 @@ private fun MentorItem(
 
             Spacer(Modifier.height(2.dp))
 
-            // 내용 (지금은 이메일)
+            // 내용 (소개)
             Text(
-                text = user.email,
+                text = user.introduction ?: "소개가 없습니다.",
                 style = MaterialTheme.typography.bodySmall,
                 color = Color(0xFF323232),
                 maxLines = 1,

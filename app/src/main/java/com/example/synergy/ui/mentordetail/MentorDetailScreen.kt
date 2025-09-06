@@ -32,15 +32,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.fillMaxSize
+import com.example.synergy.SYNERGYApp
 import com.example.synergy.data.model.Category
 import com.example.synergy.ui.component.CategoryChip
 import com.example.synergy.ui.theme.Gray60
 import com.example.synergy.ui.theme.Gray80
+import com.example.synergy.ui.theme.SYNERGYTheme
 import com.example.synergy.ui.theme.White
 
 @Composable
 fun MentorDetailScreen(
     mentorId: Int,
+    onApplyClick: () -> Unit = {},
     viewModel: MentorDetailViewModel = viewModel(),
 ) {
     LaunchedEffect(mentorId) { viewModel.load(mentorId) }
@@ -55,7 +58,10 @@ fun MentorDetailScreen(
         )
         is MentorDetailUiState.Success -> {
             val data = (uiState as MentorDetailUiState.Success).data
-            MentorDetailContent(data = data, onApplyClick = { /* TODO: 멘토링 신청 액션 */ })
+            MentorDetailContent(
+                data = data,
+                onApplyClick = onApplyClick
+            )
         }
     }
 
@@ -203,7 +209,7 @@ private fun MentorDetailContentPreview() {
         introduction = "안녕하세요. 백엔드/모바일 멘토링을 하고 있습니다."
     )
 
-    MaterialTheme {
+    SYNERGYTheme {
         MentorDetailContent(
             data = sample,
             onApplyClick = {}
