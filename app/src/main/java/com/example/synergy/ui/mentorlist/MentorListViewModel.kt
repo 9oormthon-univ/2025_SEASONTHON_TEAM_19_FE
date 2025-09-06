@@ -2,6 +2,7 @@ package com.example.synergy.ui.mentorlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.synergy.MainActivity.Companion.categories
 import com.example.synergy.data.repository.MentorRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,6 +27,7 @@ class MentorListViewModel(
             try {
                 val list = repo.getCategories()
                 _ui.update { it.copy(categories = list, isLoading = false) }
+                categories = list
             } catch (e: Exception) {
                 _ui.update { it.copy(isLoading = false, error = e.message ?: "카테고리 로드 실패") }
             }

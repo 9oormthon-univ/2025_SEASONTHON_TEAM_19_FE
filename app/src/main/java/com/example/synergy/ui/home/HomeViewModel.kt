@@ -1,13 +1,18 @@
 package com.example.synergy.ui.home
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.synergy.BuildConfig
 import com.example.synergy.data.model.Mentor
+import com.example.synergy.data.repository.MentorRepository
 import com.example.synergy.util.DummyData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(
+    private val repository: MentorRepository = MentorRepository(),
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState
@@ -20,23 +25,23 @@ class HomeViewModel : ViewModel() {
         loadRecentMentors()
     }
 
-    fun loadFavoriteMentors() {
-        if (BuildConfig.DEBUG)
-            _uiState.value = _uiState.value.copy(favoriteMentors = DummyData.dummyMentors)
-        else {
-
+    private fun loadFavoriteMentors() {
+        viewModelScope.launch {
+            runCatching { repository.getFavoriteMentors() }
+                .onSuccess { _uiState.value = _uiState.value.copy(favoriteMentors = it.content) }
+                .onFailure { }
         }
     }
 
-    fun loadRecommendedMentors() {
-        if (BuildConfig.DEBUG)
-            _uiState.value = _uiState.value.copy(recommendedMentors = DummyData.dummyMentors)
-        else {
-
+    private fun loadRecommendedMentors() {
+        viewModelScope.launch {
+            runCatching { repository.getRecommendMentors() }
+                .onSuccess { _uiState.value = _uiState.value.copy(recommendedMentors = it.content) }
+                .onFailure { }
         }
     }
 
-    fun loadMyMentoringList() {
+    private fun loadMyMentoringList() {
         if (BuildConfig.DEBUG)
             _uiState.value = _uiState.value.copy(myMentoringList = listOf("a", "b", "c"))
         else {
@@ -44,7 +49,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun loadMyLectures() {
+    private fun loadMyLectures() {
         if (BuildConfig.DEBUG)
             _uiState.value = _uiState.value.copy(myLectures = listOf("d", "e", "f"))
         else {

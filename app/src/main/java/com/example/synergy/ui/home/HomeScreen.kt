@@ -54,9 +54,7 @@ import com.example.synergy.ui.home.component.MentorItem
 import com.example.synergy.ui.theme.SYNERGYTheme
 
 @Composable
-fun HomeScreen(
-    viewModel: HomeViewModel = viewModel(),
-) {
+fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
 
     val scrollState = rememberScrollState()
@@ -133,7 +131,7 @@ fun MentoringBannerSection(modifier: Modifier) {
                 )
             }
 
-            IconButton(onClick = {},) {
+            IconButton(onClick = {}) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                     contentDescription = "MentorRecommendButton"
@@ -191,7 +189,7 @@ fun MyMentoringSection(
         TextButton(
             onClick = { selectedItem = 0 },
             colors = ButtonDefaults.textButtonColors(
-                contentColor = if (selectedItem == 0) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.surface
+                contentColor = if (selectedItem == 0) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.error
             )
         ) {
             Text(text = stringResource(R.string.lecture))
@@ -199,7 +197,7 @@ fun MyMentoringSection(
         TextButton(
             onClick = { selectedItem = 1 },
             colors = ButtonDefaults.textButtonColors(
-                contentColor = if (selectedItem == 1) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.surface
+                contentColor = if (selectedItem == 1) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.error
             )
         ) {
             Text(text = stringResource(R.string.mentor))
@@ -232,8 +230,11 @@ fun MentoringRecommendSection(
         fontSize = 20.sp
     )
 
-    mentors.take(5).forEach { mentor ->
+    mentors.take(5).forEachIndexed { index, mentor ->
         MentorItem(modifier, mentor)
+        if (index < mentors.take(5).lastIndex) {
+            HorizontalDivider()
+        }
     }
 
     Spacer(modifier = Modifier.height(40.dp))

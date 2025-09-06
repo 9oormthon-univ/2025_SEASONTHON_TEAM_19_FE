@@ -35,6 +35,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import com.example.synergy.SYNERGYApp
 import com.example.synergy.data.model.Category
 import com.example.synergy.ui.component.CategoryChip
+import com.example.synergy.ui.component.LoadingScreen
 import com.example.synergy.ui.theme.Gray60
 import com.example.synergy.ui.theme.Gray80
 import com.example.synergy.ui.theme.SYNERGYTheme
@@ -51,7 +52,7 @@ fun MentorDetailScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     when (uiState) {
-        is MentorDetailUiState.Loading -> LoadingView()
+        is MentorDetailUiState.Loading -> LoadingScreen()
         is MentorDetailUiState.Error -> ErrorView(
             message = (uiState as MentorDetailUiState.Error).message,
             onRetry = { viewModel.load(mentorId) }
@@ -150,13 +151,6 @@ private fun MentorDetailContent(
         }
 
         Spacer(Modifier.height(8.dp))
-    }
-}
-
-@Composable
-private fun LoadingView() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator()
     }
 }
 
