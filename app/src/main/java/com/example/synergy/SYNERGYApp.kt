@@ -22,17 +22,18 @@ fun SYNERGYApp() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = NavigationRoute.SignUp.route,
+            startDestination = NavigationRoute.SignIn.route,
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable(route = NavigationRoute.SignIn.route) {
+                SignInScreen(
+                    onSignUpClick = { navController.navigate(NavigationRoute.SignUp.route) },
+                    onHomeClick = { navController.navigate(NavigationRoute.Home.route) }
+                )
+            }
             composable(route = NavigationRoute.SignUp.route) {
                 SignUpScreen {
                     navController.navigate(NavigationRoute.SignIn.route)
-                }
-            }
-            composable(route = NavigationRoute.SignIn.route) {
-                SignInScreen {
-                    navController.navigate(NavigationRoute.Home.route)
                 }
             }
             composable(route = NavigationRoute.Home.route) {
