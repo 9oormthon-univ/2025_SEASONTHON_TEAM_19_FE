@@ -54,4 +54,14 @@ interface MentorApi {
         @Query("size") size: Int,
         @Query("sort") sort: String = "id,asc",
     ): MentorPageResponse
+
+    @GET("/api/mentors?size=20&sort=mentoringCount,desc")
+    suspend fun getFavoriteMentors(): MentorPageResponse
+
+    @GET("api/mentors")
+    suspend fun getRecommendMentors(
+        @Query("page") page: Int,
+        @Query("size") size: Int,
+        @Query("sort") sort: String = "id,asc",
+    ): MentorPageResponse
 }
